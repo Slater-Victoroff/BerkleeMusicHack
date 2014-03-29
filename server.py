@@ -70,7 +70,7 @@ def main():
     scheduler = tornado.ioloop.PeriodicCallback(poll_monitor, 10, io_loop = event_loop)
     scheduler.start()
 
-    datagen = tornado.ioloop.PeriodicCallback(tick, 300, io_loop = event_loop)
+    datagen = tornado.ioloop.PeriodicCallback(tick, 500, io_loop = event_loop)
     datagen.start()
 
     event_loop.current().start()
