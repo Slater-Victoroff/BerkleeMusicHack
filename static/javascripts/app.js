@@ -1,4 +1,13 @@
 
+//C D E G A
+notes = [T("sin", {freq:261.626, mul:1}), 
+         T("sin", {freq:293.665, mul:1}),
+         T("sin", {freq:329.628, mul:1}),
+         T("sin", {freq:391.995, mul:1}),
+         T("sin", {freq:440.000, mul:1})]
+
+prev = false;
+
 $(document).ready(function() {
 
     circles = [];
@@ -40,6 +49,12 @@ $(document).ready(function() {
     ws.onmessage = function (evt) {
       var data = JSON.parse(evt.data);
       var c = circle(data.x, data.y, data.r, data.note);
+      // if (prev) {
+      //   prev.pause()
+      // }
+      // prev = notes[data.note].play(1);
+      // console.log(prev);
+
       two.update()
     };
 
