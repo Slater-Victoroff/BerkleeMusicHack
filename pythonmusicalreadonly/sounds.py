@@ -122,7 +122,6 @@ def play(data, volume=0.25) :
 
 # # Trying to do continuous arpeggio?
 
-<<<<<<< HEAD
 print "Playing strum audio..."
 # play(strum(), 0.5)
 
