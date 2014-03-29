@@ -18,6 +18,7 @@ import numpy as np
 import json
 
 clients = []
+idx = 0
 
 class ViewHandler(tornado.web.RequestHandler):
     def get(self):
@@ -54,9 +55,12 @@ def main(result_queue):
 '''
     def tick():
         dx, dy, dr = np.random.randint(-50, 51), np.random.randint(-50, 51), np.random.randint(-10, 11)
-        measurement = {'x': 300 + dx, 'y': 240 + dy, 'r': 20 + dr, 'note': np.random.randint(0, 5)}
+        measurement = {'x': 300 + dx, 'y': 240 + dy, 'r': 20 + dr, 'note': idx % 5}
         result_queue.put(measurement)
+<<<<<<< HEAD
 '''
+        global idx
+        idx += 1
     def poll_monitor():
         try:
             if not result_queue.empty():

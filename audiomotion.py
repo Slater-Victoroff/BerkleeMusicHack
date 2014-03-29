@@ -4,6 +4,7 @@ import map_cvdata as mc
 import sounds
 import server
 import sys
+from timeline import Beat
 
 xx,yy = np.meshgrid(np.arange(640),np.arange(480))
 dxs = []
@@ -48,6 +49,10 @@ while True:
     #print note
     #volume = mc.get_volume(magPhase[0],0,1)
     #sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
+    beat = Beat('drumbeat2.wav',10,6)
+    volume = mc.get_volume(magPhase[0],0,1)
+    sounds.play(sounds.singlebeat(beat))
+
 def signalHandler(signal,frame):
     print('exiting')
     p1.terminate()
