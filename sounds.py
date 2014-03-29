@@ -23,7 +23,7 @@ def arpeggio(*args, **kwargs):
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Add progression to timeline by arpeggiating chords from the progression
-    for index in [0, 1]:
+    for index in [0]:
       chord = kwargs['progression'][index]
       root, third, fifth = chord.notes
       arpeggio = [root, third, fifth, third, root, third, fifth, third]
