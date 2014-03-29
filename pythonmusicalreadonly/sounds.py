@@ -136,11 +136,15 @@ def multilayer(layers_input, *args, **kwargs):
     layers = [0] * (layerslength)
     layersvols = [0] * (layerslength)
 
+<<<<<<< HEAD
+    for i in range(len(layers_input)):
+=======
     biggest = 0
 
     for i in range(len(layers_input)):
         #check for biggest-ness here.
 
+>>>>>>> 61600df358e00d17c9fd8aaaec50d60085c441b6
         currentlayer = layers_input[i]
         layertype = currentlayer[0]
         layervolume = currentlayer[1]
@@ -157,6 +161,38 @@ def multilayer(layers_input, *args, **kwargs):
             note_dict = currentlayer[2]
             layers[i] = multinote(note_dict, *args, **kwargs)
 
+<<<<<<< HEAD
+    returnme =  reduce(operator.add, [note * volume for note, volume in zip(layers, layersvols)])
+    print returnme
+    return returnme
+    #     for l in layers_input:
+    #         layertype = l["layertype"]
+    #         layervolume = l["volume"]
+    #         layersvols[i] = layervolume
+
+    #         if layertype == "arpeggio":
+    #             layers[i] = arpeggio(*args, **kwargs)
+    #         elif layertype == "strum":
+    #             layers[i] = strum(*args, **kwargs)
+    #         elif layertype == "singlenote":
+    #             note_number = l["note_number"]
+    #             layers[i] = singlenote(note_number, *args, **kwargs)
+    #         elif layertype == "multinote":
+    #             note_dict = l["note_dict"]
+    #             layers[i] = multinote(note_dict, *args, **kwargs)
+
+    # print layers
+    # print layers_input
+    # return
+
+
+@chord_progression
+def notes_and_beat(notes, beat, *args, **kwargs):
+    """
+    notes should be the result of multinote or singlenote
+    beat should be results of singlebeat
+    """
+=======
     biggest = layers[0].shape
     print biggest
 
@@ -183,6 +219,7 @@ def notes_and_beat(notes, beat, *args, **kwargs):
     notes should be the result of multinote or singlenote
     beat should be results of singlebeat
     """
+>>>>>>> 61600df358e00d17c9fd8aaaec50d60085c441b6
     if len(beat) > len(notes):
         res = beat.copy()
         res[:len(notes)] += notes
@@ -206,9 +243,18 @@ def play(data, volume=1) :
 
     return
 
+
 #####################
 # Audio testing
 
+<<<<<<< HEAD
+# # Trying to do continuous arpeggio?
+
+# print "Playing strum audio..."
+# # play(strum(), 0.5)
+
+=======
+>>>>>>> 61600df358e00d17c9fd8aaaec50d60085c441b6
 # print "Playing single note audio..."
 # first = singlenote(0)
 # play(first, 0.5)
@@ -218,6 +264,10 @@ def play(data, volume=1) :
 # print "Playing strum audio..."
 # play(strum(), 0.5)
 
+
+
+
+
 # print "Playing single note audio..."
 # first = singlenote(0)
 # play(multinote({0:10, 1: 10, 2:10}, note="A3", scale="pentatonicmajor"))
@@ -226,5 +276,11 @@ def play(data, volume=1) :
 
 # multilayer([{"layertype": "singlenote", "volume": .5, "note_number": 1}], note="A3", scale="pentatonicmajor")
 
+<<<<<<< HEAD
+# multilayer([["arpeggio", 2], ["arpeggio", 3]], note="A3", scale="pentatonicmajor")
+# play(notes_and_beat(multinote({0:10, 1: 10, 2:10}), singlebeat(Beat('drumbeat2.wav')), note="A3", scale="pentatonicmajor"))
+
+=======
 multilayer([["arpeggio", 2], ["arpeggio", 3]], note="A3", scale="pentatonicmajor")
+>>>>>>> 61600df358e00d17c9fd8aaaec50d60085c441b6
 
