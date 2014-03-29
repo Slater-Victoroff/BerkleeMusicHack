@@ -1,9 +1,12 @@
 import operator
+import pygame
+import numpy as np
 
 from musical.theory import Note, Scale, Chord
-from musical.audio import playback
+from musical.audio import playback, source, effect
+from scipy.io.wavfile import read
 
-from timeline import Hit, Timeline
+from timeline import Hit, Timeline, Beat
 
 # Building upon example-01.py from the python-musical repo online
 # For our Berklee Music Therapy hack project: arpeggio, strumming, single notes
@@ -86,6 +89,16 @@ def singlenote(note_number, *args, **kwargs):
     singlenote_data = singlenote_timeline.render()
 
     return singlenote_data
+        
+def singlebeat(beat):
+    beat_timeline = Timeline()
+    time = 0.0
+    beat_timeline.add(time+0.0, beat)
+
+    print "Rendering beat audio..."
+    beat_data = beat_timeline.render()
+
+    return beat_data
 
 #####################
 ## Chord things!
@@ -144,6 +157,21 @@ def multilayer(layers_input, *args, **kwargs):
 
     #return reduce(operator.add, [note * volume for note, volume in zip(layers, layersvols)])
 
+
+@chord_progression
+def notes_and_beat(notes, beat, *args, **kwargs):
+    """
+    notes should be the result of multinote or singlenote
+    beat should be results of singlebeat
+    """
+    if len(beat) > len(notes):
+        res = beat.copy()
+        res[:len(notes)] += notes
+    else:
+        res = notes.copy()
+        res[:len(beat)] += beat
+    return res
+
 #####################
 ## Playing a data file at a particular volume
 def play(data, volume=0.25) :
@@ -158,6 +186,7 @@ def play(data, volume=0.25) :
     playback.play(data)
 
     return
+
 
 #####################
 # Audio testing
@@ -187,4 +216,3 @@ def play(data, volume=0.25) :
 
 multilayer([{"layertype": "singlenote", "volume": .5, "note_number": 1}], note="A3", scale="pentatonicmajor")
 
-print "Done!"
