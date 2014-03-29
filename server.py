@@ -52,15 +52,8 @@ def main(result_queue):
     server = tornado.httpserver.HTTPServer(app)
     server.listen(config.server_port)
     print "Listening on port:", config.server_port
-'''
-    def tick():
-        dx, dy, dr = np.random.randint(-50, 51), np.random.randint(-50, 51), np.random.randint(-10, 11)
-        measurement = {'x': 300 + dx, 'y': 240 + dy, 'r': 20 + dr, 'note': idx % 5}
-        result_queue.put(measurement)
-<<<<<<< HEAD
-'''
-        global idx
-        idx += 1
+    global idx
+    idx += 1
     def poll_monitor():
         try:
             if not result_queue.empty():

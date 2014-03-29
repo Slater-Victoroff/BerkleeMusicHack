@@ -2,9 +2,17 @@ import cv2
 import numpy as np
 import map_cvdata as mc
 import sounds
+import signal
 import server
 import sys
 from timeline import Beat
+from matplotlib import pyplot
+
+def signalHandler(signal,frame):
+    print('exiting')
+    p1.terminate()
+    raise SystemExit
+    sys.exit()
 
 xx,yy = np.meshgrid(np.arange(640),np.arange(480))
 dxs = []
@@ -28,6 +36,8 @@ while True:
     cv2.accumulateWeighted(greyscale,vis,.9,None)
     runavg = cv2.convertScaleAbs(vis)
     disp=greyscale-vis
+#    cv2.imshow('movement',disp)
+#    pyplot.show()
     pmask = np.abs(disp) > 5
     x = np.mean(640-xx[pmask])
     y = np.mean(480-yy[pmask])
@@ -46,15 +56,9 @@ while True:
     note = mc.get_note(magPhase[1])
     measurement = {'x':xs[-1],'y':ys[-1],'r':magPhase[0],'note':note}
     dataQueue.put(measurement)
-    #print note
-    #volume = mc.get_volume(magPhase[0],0,1)
-    #sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
+    print note
+    volume = mc.get_volume(magPhase[0],0,1)
+    sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
     beat = Beat('drumbeat2.wav',10,6)
     volume = mc.get_volume(magPhase[0],0,1)
     sounds.play(sounds.singlebeat(beat))
-
-def signalHandler(signal,frame):
-    print('exiting')
-    p1.terminate()
-    raise SystemExit
-    sys.exit()
