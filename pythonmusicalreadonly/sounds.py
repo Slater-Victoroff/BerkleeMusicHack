@@ -8,7 +8,7 @@ from timeline import Hit, Timeline
 # greenteawarrior
 
 # Define key and scale
-key = Note('D3')
+key = Note('D#3')
 scale = Scale(key, 'major')
 
 # Grab progression chords from scale starting at the octave of our key
@@ -67,7 +67,7 @@ def singlenote(note_number):
 
     # Strum out root chord to finish
     chord = progression[0]
-    singlenote_timeline.add(time + 0.0, Hit(chord.notes[note_number], 3.0)) # 3.0 is the amount of time the entire thing will run
+    singlenote_timeline.add(time + 0.0, Hit(chord.notes[note_number], 2.5)) # 3.0 is the amount of time the entire thing will run
 
     print "Rendering singlenote audio..."
     singlenote_data = singlenote_timeline.render()
@@ -91,19 +91,21 @@ def play(data, volume=0.25) :
 
 #####################
 # Audio testing
-print "Playing arpeggio audio..."
-play(arpeggio(), 0.25)
+# print "Playing arpeggio audio..."
+# play(arpeggio(), 0.25)
 
 # Trying to do continuous arpeggio?
 
 print "Playing strum audio..."
-play(strum(), 0.5)
+# play(strum(), 0.5)
 
 print "Playing single note audio..."
 first = singlenote(0)
 play(first, 0.5)
 play(first, 0.5)
-play(singlenote(1), 0.5)
-play(singlenote(2), 0.5)
+play(first, 0.5)
+
+# play(singlenote(1), 0.5)
+# play(singlenote(2), 0.5)
 
 print "Done!"
