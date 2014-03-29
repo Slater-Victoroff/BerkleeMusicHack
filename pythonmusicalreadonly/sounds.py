@@ -9,6 +9,14 @@ from timeline import Hit, Timeline
 # For our Berklee Music Therapy hack project: arpeggio, strumming, single notes
 # greenteawarrior
 
+# Define key and scale
+key = Note('D#3')
+scale = Scale(key, 'major')
+
+# Grab progression chords from scale starting at the octave of our key
+progression = Chord.progression(scale, base_octave=key.octave)
+print progression
+
 def chord_progression(func):
     def generate_progression(*args, **kwargs):
         if not kwargs.get('progression', False):
@@ -113,6 +121,15 @@ def play(data, volume=0.25) :
 # play(arpeggio(), 0.25)
 
 # # Trying to do continuous arpeggio?
+
+print "Playing strum audio..."
+# play(strum(), 0.5)
+
+print "Playing single note audio..."
+first = singlenote(0)
+play(first, 0.5)
+play(first, 0.5)
+play(first, 0.5)
 
 # print "Playing strum audio..."
 # play(strum(), 0.5)
