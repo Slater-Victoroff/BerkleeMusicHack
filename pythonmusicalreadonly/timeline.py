@@ -22,7 +22,7 @@ class Hit:
     self.length = length
 
   def render(self):
-    # Render hit of "key" for "length" amound of seconds
+    # Render hit of "key" for "length" amount of seconds
     # XXX: Currently only uses a string pluck
     key = (str(self.note), self.length)
     if key not in Hit.cache:

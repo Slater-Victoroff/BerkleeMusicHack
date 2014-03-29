@@ -8,7 +8,7 @@ from timeline import Hit, Timeline
 
 # Define key and scale
 key = Note('E3')
-scale = Scale(key, 'harmonic minor')
+scale = Scale(key, 'major')
 
 time = 0.0 # Keep track of currect note placement time in seconds
 

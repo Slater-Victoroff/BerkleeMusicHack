@@ -70,7 +70,7 @@ def square(freq, length, rate=44100, phase=0.0):
 
 def ringbuffer(data, length, decay=1.0, rate=44100):
   ''' Repeat data for 'length' amount of time, smoothing to reduce higher
-      frequency oscillation. decay is the percent of amplitude decrease.
+      frequency oscillation. decay is the rcent of amplitude decrease.
   '''
   phase = len(data)
   length = int(rate * length)
