@@ -20,9 +20,10 @@ def get_note(phase):
     """
     print phase
     correct = 'D'
-#90-200
 
-    note_phases = {'G':[90,112],'C':[112,134],'E':[134,156],'A':[156,178],'D':[178,200]}
+    #note_phases = {'G':[90,112],'C':[112,134],'E':[134,156],'A':[156,178],'D':[178,200]}
+    note_phases = {0:[90,112],1:[112,134],2:[134,156],3:[156,178],4:[178,200]}
+#69 71 72 76 84
     for note, p_range in note_phases.iteritems():
         if phase%360 < p_range[1] and phase%360 >= p_range[0]:
             correct = note

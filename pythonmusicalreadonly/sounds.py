@@ -1,24 +1,9 @@
 import operator
-import pygame
-import numpy as np
 
 from musical.theory import Note, Scale, Chord
-from musical.audio import playback, source, effect
-from scipy.io.wavfile import read
+from musical.audio import playback
 
-from timeline import Hit, Timeline, Beat
-
-# Building upon example-01.py from the python-musical repo online
-# For our Berklee Music Therapy hack project: arpeggio, strumming, single notes
-# greenteawarrior
-
-# Define key and scale
-key = Note('D#3')
-scale = Scale(key, 'major')
-
-# Grab progression chords from scale starting at the octave of our key
-progression = Chord.progression(scale, base_octave=key.octave)
-# print progression
+from timeline import Hit, Timeline
 
 def chord_progression(func):
     def generate_progression(*args, **kwargs):
@@ -75,7 +60,7 @@ def strum(*args, **kwargs):
     return strum_data
 
 #####################
-## Gesture: Single note!
+## Gesture: Strum!
 @chord_progression
 def singlenote(note_number, *args, **kwargs):
     singlenote_timeline = Timeline()
@@ -89,22 +74,21 @@ def singlenote(note_number, *args, **kwargs):
     singlenote_data = singlenote_timeline.render()
 
     return singlenote_data
-        
-def singlebeat(beat):
-    beat_timeline = Timeline()
-    time = 0.0
-    beat_timeline.add(time+0.0, beat)
 
-    print "Rendering beat audio..."
-    beat_data = beat_timeline.render()
-
-    return beat_data
-
-#####################
-## Chord things!
 @chord_progression
 def multinote(note_dict, *args, **kwargs):
     """
+<<<<<<< HEAD
+note_dict should be of the form:
+{
+note_number1: volume1,
+note_numer2: volume2,
+...
+}
+"""
+    notes = [singlenote(number, *args, **kwargs) for number in note_dict]
+    return reduce(operator.add, [note * volume for note, volume in zip(notes, note_dict)])
+=======
     note_dict should be of the form:
     [
     [note_number1, volume1],
@@ -227,20 +211,24 @@ def notes_and_beat(notes, beat, *args, **kwargs):
         res = notes.copy()
         res[:len(beat)] += beat
     return res
+>>>>>>> 7e54cd4d3d4a18007c1b0913d8673bfa44266ed0
 
 #####################
 ## Playing a data file at a particular volume
-def play(data, volume=1) :
+def play(data, volume=0.25) :
     # input is a proportion. 0<volume<1
     # example: a volume input of 0.25 makes it play at 25% volume
 
-    # Reduce volume to the specified number 
+    # Reduce volume to the specified number
     data = data * volume
 
     # Playing the audio
     print "Playing the audio file..."
     playback.play(data)
 
+<<<<<<< HEAD
+    return
+=======
     return
 
 
@@ -284,3 +272,4 @@ def play(data, volume=1) :
 multilayer([["arpeggio", 2], ["arpeggio", 3]], note="A3", scale="pentatonicmajor")
 >>>>>>> 61600df358e00d17c9fd8aaaec50d60085c441b6
 
+>>>>>>> 7e54cd4d3d4a18007c1b0913d8673bfa44266ed0

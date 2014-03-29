@@ -18,6 +18,7 @@ import numpy as np
 import json
 
 clients = []
+idx = 0
 
 class ViewHandler(tornado.web.RequestHandler):
     def get(self):
@@ -35,7 +36,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         print 'Connection closed'
         clients.remove(self)
  
-def main():
+def main(result_queue):
  
     result_queue = multiprocessing.Queue()
 
@@ -51,12 +52,15 @@ def main():
     server = tornado.httpserver.HTTPServer(app)
     server.listen(config.server_port)
     print "Listening on port:", config.server_port
-
+'''
     def tick():
         dx, dy, dr = np.random.randint(-50, 51), np.random.randint(-50, 51), np.random.randint(-10, 11)
-        measurement = {'x': 300 + dx, 'y': 240 + dy, 'r': 20 + dr, 'note': np.random.randint(0, 5)}
+        measurement = {'x': 300 + dx, 'y': 240 + dy, 'r': 20 + dr, 'note': idx % 5}
         result_queue.put(measurement)
-
+<<<<<<< HEAD
+'''
+        global idx
+        idx += 1
     def poll_monitor():
         try:
             if not result_queue.empty():
@@ -69,9 +73,6 @@ def main():
     event_loop = tornado.ioloop.IOLoop.instance()
     scheduler = tornado.ioloop.PeriodicCallback(poll_monitor, 10, io_loop = event_loop)
     scheduler.start()
-
-    datagen = tornado.ioloop.PeriodicCallback(tick, 500, io_loop = event_loop)
-    datagen.start()
 
     event_loop.current().start()
  

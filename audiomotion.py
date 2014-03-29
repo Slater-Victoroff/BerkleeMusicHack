@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 import map_cvdata as mc
 import sounds
+import server
+import sys
+from timeline import Beat
 
 xx,yy = np.meshgrid(np.arange(640),np.arange(480))
 dxs = []
@@ -13,6 +16,10 @@ ret,frame = cam.read()
 greyscale = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 greyscale = cv2.GaussianBlur(greyscale,(5,5),0)
 vis = disp = np.float32(greyscale) 
+dataQueue=multiprocessing.Queue()
+p1=multiprocessing.Process(target=server.main,args=(dataQueue))
+p1.start()
+signal.signal(signal.SIGINT,signalHandler)
 while True:
     ret,frame = cam.read()
 
@@ -37,6 +44,17 @@ while True:
     magPhase = mc.extract_mag_and_phase(vecs)
     print magPhase
     note = mc.get_note(magPhase[1])
-    print note
+    measurement = {'x':xs[-1],'y':ys[-1],'r':magPhase[0],'note':note}
+    dataQueue.put(measurement)
+    #print note
+    #volume = mc.get_volume(magPhase[0],0,1)
+    #sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
+    beat = Beat('drumbeat2.wav',10,6)
     volume = mc.get_volume(magPhase[0],0,1)
-    sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
+    sounds.play(sounds.singlebeat(beat))
+
+def signalHandler(signal,frame):
+    print('exiting')
+    p1.terminate()
+    raise SystemExit
+    sys.exit()

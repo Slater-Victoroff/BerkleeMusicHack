@@ -23,7 +23,7 @@ def arpeggio(*args, **kwargs):
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Add progression to timeline by arpeggiating chords from the progression
-    for index in [0, 1]:
+    for index in [0]:
       chord = kwargs['progression'][index]
       root, third, fifth = chord.notes
       arpeggio = [root, third, fifth, third, root, third, fifth, third]
@@ -87,6 +87,33 @@ def multinote(note_dict, *args, **kwargs):
     """
     notes = [singlenote(number, *args, **kwargs) for number in note_dict]
     return reduce(operator.add, [note * volume for note, volume in zip(notes, note_dict)])
+
+@chord_progression
+def singlebeat(beat, *args, **kwargs):
+    beat_timeline = Timeline()
+    time = 0.0
+    beat_timeline.add(time+0.0, beat)
+
+    print "Rendering beat audio..."
+    beat_data = beat_timeline.render()
+
+    return beat_data
+
+@chord_progression
+def notes_and_beat(notes, beat, *args, **kwargs):
+
+    """
+    notes should be the result of multinote or singlenote
+    beat should be results of singlebeat
+    """
+
+    if len(beat) > len(notes):
+        res = beat.copy()
+        res[:len(notes)] += notes
+    else:
+        res = notes.copy()
+        res[:len(beat)] += beat
+    return res
 
 #####################
 ## Playing a data file at a particular volume
