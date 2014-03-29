@@ -4,7 +4,7 @@ from musical.audio import playback
 from timeline import Hit, Timeline
 
 # Building upon example-01.py from the python-musical repo online
-# For our Berklee Music Therapy hack project: arpeggio, strumming, single notes, drumbeat
+# For our Berklee Music Therapy hack project: arpeggio, strumming, single notes
 # greenteawarrior
 
 # Define key and scale
@@ -60,6 +60,21 @@ def strum():
     return strum_data
 
 #####################
+## Gesture: Strum!
+def singlenote():
+    singlenote_timeline = Timeline()
+    time = 0.0 # Keep track of currect note placement time in seconds
+
+    # Strum out root chord to finish
+    chord = progression[0]
+    singlenote_timeline.add(time + 0.0, Hit(chord.notes[0], 4.0))
+
+    print "Rendering singlenote audio..."
+    singlenote_data = singlenote_timeline.render()
+
+    return singlenote_data
+
+#####################
 ## Playing a data file at a particular volume
 
 def play(data, volume=0.25) :
@@ -74,11 +89,15 @@ def play(data, volume=0.25) :
 
     return
 
+#####################
 # Audio testing
-print "Playing arpeggio audio..."
-play(arpeggio(), 0.25)
+# print "Playing arpeggio audio..."
+# play(arpeggio(), 0.25)
 
-print "Playing strum audio..."
-play(strum(), 0.5)
+# print "Playing strum audio..."
+# play(strum(), 0.5)
+
+print "Playing single note audio..."
+play(singlenote(), 0.5)
 
 print "Done!"
