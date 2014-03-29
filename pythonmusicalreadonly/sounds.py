@@ -1,3 +1,5 @@
+import operator
+
 from musical.theory import Note, Scale, Chord
 from musical.audio import playback
 
@@ -15,17 +17,26 @@ scale = Scale(key, 'major')
 progression = Chord.progression(scale, base_octave=key.octave)
 print progression
 
+def chord_progression(func):
+    def generate_progression(*args, **kwargs):
+        if not kwargs.get('progression', False):
+            kwargs['key'] = Note(kwargs.get('note', 'D3'))
+            kwargs['scale'] = Scale(kwargs['key'], kwargs.get('scale', 'major'))
+            kwargs['progression'] = Chord.progression(kwargs['scale'], base_octave=kwargs['key'].octave)
+        return func(*args, **kwargs)
+    return generate_progression
 
 #####################
 ## Gesture: Arpeggio!
-def arpeggio():
+@chord_progression
+def arpeggio(*args, **kwargs):
 
     arpeggio_timeline = Timeline()
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Add progression to timeline by arpeggiating chords from the progression
-    for index in [0, 1]:# Audio testing
-      chord = progression[index]
+    for index in [0, 1]:
+      chord = kwargs['progression'][index]
       root, third, fifth = chord.notes
       arpeggio = [root, third, fifth, third, root, third, fifth, third]
       for i, interval in enumerate(arpeggio):
@@ -41,12 +52,13 @@ def arpeggio():
 
 #####################
 ## Gesture: Strum!
-def strum():
+@chord_progression
+def strum(*args, **kwargs):
     strum_timeline = Timeline()
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Strum out root chord to finish
-    chord = progression[0]
+    chord = kwargs['progression'][0]
     strum_timeline.add(time + 0.0, Hit(chord.notes[0], 4.0))
     strum_timeline.add(time + 0.1, Hit(chord.notes[1], 4.0))
     strum_timeline.add(time + 0.2, Hit(chord.notes[2], 4.0))
@@ -61,18 +73,32 @@ def strum():
 
 #####################
 ## Gesture: Strum!
-def singlenote(note_number):
+@chord_progression
+def singlenote(note_number, *args, **kwargs):
     singlenote_timeline = Timeline()
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Strum out root chord to finish
-    chord = progression[0]
-    singlenote_timeline.add(time + 0.0, Hit(chord.notes[note_number], 2.5)) # 3.0 is the amount of time the entire thing will run
+    chord = kwargs['progression'][0]
+    singlenote_timeline.add(time + 0.0, Hit(chord.notes[note_number], 3.0))
 
     print "Rendering singlenote audio..."
     singlenote_data = singlenote_timeline.render()
 
     return singlenote_data
+
+@chord_progression
+def multinote(note_dict, *args, **kwargs):
+    """
+    note_dict should be of the form:
+    {
+    note_number1: volume1,
+    note_numer2: volume2,
+    ...
+    }
+    """
+    notes = [singlenote(number, *args, **kwargs) for number in note_dict]
+    return reduce(operator.add, [note * volume for note, volume in zip(notes, note_dict)])
 
 #####################
 ## Playing a data file at a particular volume
@@ -94,8 +120,9 @@ def play(data, volume=0.25) :
 # print "Playing arpeggio audio..."
 # play(arpeggio(), 0.25)
 
-# Trying to do continuous arpeggio?
+# # Trying to do continuous arpeggio?
 
+<<<<<<< HEAD
 print "Playing strum audio..."
 # play(strum(), 0.5)
 
@@ -104,8 +131,7 @@ first = singlenote(0)
 play(first, 0.5)
 play(first, 0.5)
 play(first, 0.5)
-
-# play(singlenote(1), 0.5)
-# play(singlenote(2), 0.5)
+# first = singlenote(0)
+play(multinote({0:10, 1: 10, 2:10}, note="A3", scale="pentatonicmajor"))
 
 print "Done!"
