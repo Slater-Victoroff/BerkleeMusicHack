@@ -24,7 +24,7 @@ def arpeggio():
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Add progression to timeline by arpeggiating chords from the progression
-    for index in [0, 1]:
+    for index in [0, 1]:# Audio testing
       chord = progression[index]
       root, third, fifth = chord.notes
       arpeggio = [root, third, fifth, third, root, third, fifth, third]
@@ -61,13 +61,13 @@ def strum():
 
 #####################
 ## Gesture: Strum!
-def singlenote():
+def singlenote(note_number):
     singlenote_timeline = Timeline()
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Strum out root chord to finish
     chord = progression[0]
-    singlenote_timeline.add(time + 0.0, Hit(chord.notes[0], 4.0))
+    singlenote_timeline.add(time + 0.0, Hit(chord.notes[note_number], 3.0)) # 3.0 is the amount of time the entire thing will run
 
     print "Rendering singlenote audio..."
     singlenote_data = singlenote_timeline.render()
@@ -76,7 +76,6 @@ def singlenote():
 
 #####################
 ## Playing a data file at a particular volume
-
 def play(data, volume=0.25) :
     # input is a proportion. 0<volume<1
     # example: a volume input of 0.25 makes it play at 25% volume
@@ -84,6 +83,7 @@ def play(data, volume=0.25) :
     # Reduce volume to the specified number 
     data = data * volume
 
+    # Playing the audio
     print "Playing the audio file..."
     playback.play(data)
 
@@ -91,13 +91,19 @@ def play(data, volume=0.25) :
 
 #####################
 # Audio testing
-# print "Playing arpeggio audio..."
-# play(arpeggio(), 0.25)
+print "Playing arpeggio audio..."
+play(arpeggio(), 0.25)
 
-# print "Playing strum audio..."
-# play(strum(), 0.5)
+# Trying to do continuous arpeggio?
+
+print "Playing strum audio..."
+play(strum(), 0.5)
 
 print "Playing single note audio..."
-play(singlenote(), 0.5)
+first = singlenote(0)
+play(first, 0.5)
+play(first, 0.5)
+play(singlenote(1), 0.5)
+play(singlenote(2), 0.5)
 
 print "Done!"
