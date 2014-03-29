@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 from time import time,sleep
+from sklearn.cluster import KMeans
 
 mser=cv2.MSER()
 #mser does significantly better on color than greyscale
@@ -26,20 +27,12 @@ ys = [480/2]
 while True:
     ret,frame = cam.read()
     dddd = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-    #f1=cv2.medianBlur(frame,7)
-    #f2=framecv2.medianBlur(f1,7)
-    flag,f2 = cv2.threshold(dddd,100,120,cv2.THRESH_BINARY)
-    #kp=mser.detect(f2,None)
-    #hulls =[cv2.convexHull(p.reshape(-1,1,2)) for p in kp]
-
-    #cv2.polylines(vis,hulls,1,(0,0,255))
-    #kp=sift.detect(f2,None)
-    #vis=cv2.drawKeypoints(f2,kp)
-    cv2.accumulateWeighted(f2,vis,.9,None)
+    dddd = cv2.GaussianBlur(dddd,(5,5),0)
+    cv2.accumulateWeighted(dddd,vis,.9,None)
     runavg = cv2.convertScaleAbs(vis)
-    disp=f2-vis
-    # disp=cv2.medianBlur(disp,5)
+    disp=dddd-vis
     pmask = np.abs(disp) > 5
+
     x = np.mean(640-xx[pmask])
     y = np.mean(480-yy[pmask])
     dxs.append(xs[-1]-x)
@@ -54,7 +47,7 @@ while True:
 
     cv2.imshow('features',disp)
     plt.clf()
-    plt.plot(xs,ys)
+    plt.scatter(np.mean(xs[-3:]),np.mean(ys[-3:]))
     plt.xlim([0,640])
     plt.ylim([0,480])
     fig.canvas.draw()
