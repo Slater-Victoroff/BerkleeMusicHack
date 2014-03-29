@@ -8,22 +8,25 @@ def extract_mag_and_phase(vector):
     """
     vector = list(vector)
     scaling_factor = math.sqrt(vector[0]**2 + vector[1]**2)
+    mag = math.sqrt(vector[0]**2+vector[1]**2)
     vector[0] = vector[0] * (1./scaling_factor)
     vector[1] = vector[1] * (1./scaling_factor)
-    phase = degrees(math.atan(vector[1]/vector[0]) % math.pi)
-    mag = math.sqrt(vector[0]**2+vector[1]**2)
+    phase = degrees(math.copysign(math.atan(vector[1]/vector[0]), vector[1]) + math.pi)
     return [mag, phase]
 
 def get_note(phase):
     """
     Figure out what range the phase is in
     """
-    phase = degrees(phase)
     print phase
-    note_phases = {'G':[18,90],'C':[90,162],'E':[162,234],'A':[234,306],'D':[306,18]}
+    correct = 'D'
+#90-200
+
+    note_phases = {'G':[90,112],'C':[112,134],'E':[134,156],'A':[156,178],'D':[178,200]}
     for note, p_range in note_phases.iteritems():
         if phase%360 < p_range[1] and phase%360 >= p_range[0]:
-            return note
+            correct = note
+    return correct
 
 def degrees(phase):
     if phase<0:

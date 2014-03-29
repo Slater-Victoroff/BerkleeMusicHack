@@ -39,4 +39,4 @@ while True:
     note = mc.get_note(magPhase[1])
     print note
     volume = mc.get_volume(magPhase[0],0,1)
-    sounds.play(sounds.singlenote(note[-1],note=note,scale='pentatonicmajor'))
+    sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))

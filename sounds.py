@@ -68,7 +68,7 @@ def singlenote(note_number, *args, **kwargs):
 
     # Strum out root chord to finish
     chord = kwargs['progression'][0]
-    singlenote_timeline.add(time + 0.0, Hit(chord.notes[int(note_number)], 3.0))
+    singlenote_timeline.add(time + 0.0, Hit(chord.notes[note_number], 3.0))
 
     print "Rendering singlenote audio..."
     singlenote_data = singlenote_timeline.render()
