@@ -130,6 +130,11 @@ first = singlenote(0)
 play(first, 0.5)
 play(first, 0.5)
 play(first, 0.5)
+
+# print "Playing strum audio..."
+# play(strum(), 0.5)
+
+# print "Playing single note audio..."
 # first = singlenote(0)
 play(multinote({0:10, 1: 10, 2:10}, note="A3", scale="pentatonicmajor"))
 
