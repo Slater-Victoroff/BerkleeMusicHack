@@ -216,5 +216,5 @@ def play(data, volume=1) :
 # multilayer([{"layertype": "singlenote", "volume": .5, "note_number": 1}], note="A3", scale="pentatonicmajor")
 
 multilayer([["arpeggio", 2], ["arpeggio", 3]], note="A3", scale="pentatonicmajor")
-
+# play(notes_and_beat(multinote({0:10, 1: 10, 2:10}), singlebeat(Beat('drumbeat2.wav')), note="A3", scale="pentatonicmajor"))
 
