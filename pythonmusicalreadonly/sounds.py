@@ -7,25 +7,25 @@ from timeline import Hit, Timeline
 # For our Berklee Music Therapy hack project: arpeggio, strumming, single notes
 # greenteawarrior
 
-# Define key and scale
-key = Note('D3')
-scale = Scale(key, 'major')
-
-# Grab progression chords from scale starting at the octave of our key
-progression = Chord.progression(scale, base_octave=key.octave)
-print progression
-
+def chord_progression(func):
+    def generate_progression(*args, **kwargs):
+        kwargs['key'] = Note(kwargs.get('note', 'D3'))
+        kwargs['scale'] = Scale(kwargs['key'], kwargs.get('scale', 'major'))
+        kwargs['progression'] = Chord.progression(kwargs['scale'], base_octave=kwargs['key'].octave)
+        return func(*args, **kwargs)
+    return generate_progression
 
 #####################
 ## Gesture: Arpeggio!
-def arpeggio():
+@chord_progression
+def arpeggio(*args, **kwargs):
 
     arpeggio_timeline = Timeline()
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Add progression to timeline by arpeggiating chords from the progression
     for index in [0, 1]:
-      chord = progression[index]
+      chord = kwargs['progression'][index]
       root, third, fifth = chord.notes
       arpeggio = [root, third, fifth, third, root, third, fifth, third]
       for i, interval in enumerate(arpeggio):
@@ -41,12 +41,13 @@ def arpeggio():
 
 #####################
 ## Gesture: Strum!
-def strum():
+@chord_progression
+def strum(*args, **kwargs):
     strum_timeline = Timeline()
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Strum out root chord to finish
-    chord = progression[0]
+    chord = kwargs['progression'][0]
     strum_timeline.add(time + 0.0, Hit(chord.notes[0], 4.0))
     strum_timeline.add(time + 0.1, Hit(chord.notes[1], 4.0))
     strum_timeline.add(time + 0.2, Hit(chord.notes[2], 4.0))
@@ -61,12 +62,13 @@ def strum():
 
 #####################
 ## Gesture: Strum!
-def singlenote():
+@chord_progression
+def singlenote(*args, **kwargs):
     singlenote_timeline = Timeline()
     time = 0.0 # Keep track of currect note placement time in seconds
 
     # Strum out root chord to finish
-    chord = progression[0]
+    chord = kwargs['progression'][0]
     singlenote_timeline.add(time + 0.0, Hit(chord.notes[0], 4.0))
 
     print "Rendering singlenote audio..."
