@@ -156,26 +156,25 @@ def multilayer(layers_input, *args, **kwargs):
     returnme =  reduce(operator.add, [note * volume for note, volume in zip(layers, layersvols)])
     print returnme
     return returnme
-=======
-        for l in layers_input:
-            layertype = l["layertype"]
-            layervolume = l["volume"]
-            layersvols[i] = layervolume
+    #     for l in layers_input:
+    #         layertype = l["layertype"]
+    #         layervolume = l["volume"]
+    #         layersvols[i] = layervolume
 
-            if layertype == "arpeggio":
-                layers[i] = arpeggio(*args, **kwargs)
-            elif layertype == "strum":
-                layers[i] = strum(*args, **kwargs)
-            elif layertype == "singlenote":
-                note_number = l["note_number"]
-                layers[i] = singlenote(note_number, *args, **kwargs)
-            elif layertype == "multinote":
-                note_dict = l["note_dict"]
-                layers[i] = multinote(note_dict, *args, **kwargs)
+    #         if layertype == "arpeggio":
+    #             layers[i] = arpeggio(*args, **kwargs)
+    #         elif layertype == "strum":
+    #             layers[i] = strum(*args, **kwargs)
+    #         elif layertype == "singlenote":
+    #             note_number = l["note_number"]
+    #             layers[i] = singlenote(note_number, *args, **kwargs)
+    #         elif layertype == "multinote":
+    #             note_dict = l["note_dict"]
+    #             layers[i] = multinote(note_dict, *args, **kwargs)
 
-    print layers
-    print layers_input
-    return
+    # print layers
+    # print layers_input
+    # return
 
 
 @chord_progression
