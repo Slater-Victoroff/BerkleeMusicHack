@@ -34,9 +34,10 @@ NAMED_SCALES = {
 
 class Scale:
 
-  ''' Scale class manages rooted scales. Can be constructed by passing a root
-      and either a list of intervals or a scale name (which is used to look up
-      the intervals from NAMED_SCALES dict
+  '''
+  Scale class manages rooted scales. Can be constructed by passing a root
+  and either a list of intervals or a scale name (which is used to look up
+  the intervals from NAMED_SCALES dict
   '''
 
   def __init__(self, root, scale):
@@ -58,7 +59,8 @@ class Scale:
 
   @classmethod
   def intervals_from_name(self, name):
-    ''' Return intervals for named scale
+    '''
+    Return intervals for named scale
     '''
     global NAMED_SCALES
     name = name.lower()
@@ -67,7 +69,8 @@ class Scale:
     return NAMED_SCALES[name]
 
   def get(self, index):
-    ''' Get note from scale, 0 is the root at octave 0
+    '''
+    Get note from scale, 0 is the root at octave 0
     '''
     intervals = self.intervals
     if index < 0:
@@ -79,7 +82,8 @@ class Scale:
     return note
 
   def index(self, note):
-    ''' Return index for note, if it exists in the scale
+    '''
+    Return index for note, if it exists in the scale
     '''
     intervals = itertools.cycle(self.intervals)
     index = 0
@@ -92,7 +96,8 @@ class Scale:
     raise ValueError('%s not in %s' % (note, self))
 
   def transpose(self, note, interval):
-    ''' Transpose note with scale by intervals, 1 = second, 2 = third...
+    '''
+    Transpose note with scale by intervals, 1 = second, 2 = third...
     '''
     return self.get(self.index(note) + interval)
 
