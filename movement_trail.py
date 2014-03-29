@@ -27,8 +27,11 @@ class Canvas(object):
 		self.pixels = blank()
 
 	def fade(self):
-		print np.mean(self.pixels), np.mean(blank())
 		self.pixels = blank() - (blank() - self.pixels)/2
+
+	def update(self):
+		canvas.pixels = cv2.blur(canvas.pixels, (3,3))
+		cv2.imshow("preview", canvas.pixels)
 
 class Circle(object):
 
@@ -66,7 +69,9 @@ while rval:
 	# drawing	
 	canvas.fade()
 	c.update(dx=np.random.randint(-5, 6), dy=np.random.randint(-5, 6), dr=np.random.randint(-1, 2))
-	cv2.imshow("preview", canvas.pixels)
+	canvas.update()
+
+	print time.time()
     ## (50,50) will be changed to the value of the key point position
 
 cv2.destroyWindow("preview")
