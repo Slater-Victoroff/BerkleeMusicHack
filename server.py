@@ -36,7 +36,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         print 'Connection closed'
         clients.remove(self)
  
-def main(result_queue):
+def main():
  
     result_queue = multiprocessing.Queue()
 
@@ -52,15 +52,14 @@ def main(result_queue):
     server = tornado.httpserver.HTTPServer(app)
     server.listen(config.server_port)
     print "Listening on port:", config.server_port
-'''
+
     def tick():
+        global idx
         dx, dy, dr = np.random.randint(-50, 51), np.random.randint(-50, 51), np.random.randint(-10, 11)
         measurement = {'x': 300 + dx, 'y': 240 + dy, 'r': 20 + dr, 'note': idx % 5}
         result_queue.put(measurement)
-<<<<<<< HEAD
-'''
-        global idx
         idx += 1
+
     def poll_monitor():
         try:
             if not result_queue.empty():
@@ -72,6 +71,8 @@ def main(result_queue):
 
     event_loop = tornado.ioloop.IOLoop.instance()
     scheduler = tornado.ioloop.PeriodicCallback(poll_monitor, 10, io_loop = event_loop)
+    datagen = tornado.ioloop.PeriodicCallback(tick, 1000, io_loop = event_loop)
+    datagen.start()
     scheduler.start()
 
     event_loop.current().start()
