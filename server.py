@@ -38,8 +38,6 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
  
 def main(result_queue):
  
-    result_queue = multiprocessing.Queue()
-
     # wait a second before sending first task
     time.sleep(1)
     app = tornado.web.Application(
@@ -52,8 +50,6 @@ def main(result_queue):
     server = tornado.httpserver.HTTPServer(app)
     server.listen(config.server_port)
     print "Listening on port:", config.server_port
-    global idx
-    idx += 1
     def poll_monitor():
         try:
             if not result_queue.empty():

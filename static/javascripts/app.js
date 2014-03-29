@@ -1,7 +1,11 @@
-var note_ref = [69, 71, 72, 76, 84];
-var midis = [69, 71, 72, 76, 84];
+
+//C D E G A
+
+note = T("sin", {freq:261.626, mul:1});
+notes = [261.626, 293.665, 329.628, 391.995, 440.000]
 
 $(document).ready(function() {
+    note.play();
 
     circles = [];
 
@@ -29,7 +33,7 @@ $(document).ready(function() {
         return c;
     }
 
-    var c = circle(300, 240, 20, 0)
+    var c = circle(300, 240, 1, 0)
     // Don't forget to tell two to render everything
     // to the screen
     two.update();
@@ -41,38 +45,10 @@ $(document).ready(function() {
     };
     ws.onmessage = function (evt) {
       var data = JSON.parse(evt.data);
+      note.set({freq: notes[data.note]});
       var c = circle(data.x, data.y, data.r, data.note);
+
       two.update()
-      console.log(data);
-      midis.push(note_ref[data.note]);
-      midis.shift();
-      console.log(midis);
-      timbre.rec(function(output) {
-        var msec  = timbre.timevalue("bpm120 l8");
-        var synth = T("OscGen", {env:T("perc", {r:msec, ar:true})});
-
-        T("interval", {interval:msec}, function(count) {
-          if (count < midis.length) {
-            synth.noteOn(midis[count], 100);
-          } else {
-            output.done();
-          }
-        }).start();
-
-        output.send(synth);
-      }).then(function(result) {
-        var L = T("buffer", {buffer:result, loop:true});
-        var R = T("buffer", {buffer:result, loop:true});
-
-        var num = 400;
-        var duration = L.duration;
-
-        R.pitch = (duration * (num - 1)) / (duration * num);
-
-        T("delay", {time:"bpm120 l16", fb:0.1, cross:true},
-          T("pan", {pos:-0.6}, L), T("pan", {pos:+0.6}, R)
-        ).play();
-      });
     };
 
     var update = function() {
@@ -83,7 +59,6 @@ $(document).ready(function() {
                 two.remove(circles[c]);
             }
             two.update()
-
         }
     }
 
