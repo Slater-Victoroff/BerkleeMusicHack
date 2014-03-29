@@ -6,7 +6,7 @@ import signal
 import server
 import sys
 from timeline import Beat
-from matplotlib import pyplot
+import multiprocessing
 
 def signalHandler(signal,frame):
     print('exiting')
@@ -25,7 +25,7 @@ greyscale = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
 greyscale = cv2.GaussianBlur(greyscale,(5,5),0)
 vis = disp = np.float32(greyscale) 
 dataQueue=multiprocessing.Queue()
-p1=multiprocessing.Process(target=server.main,args=(dataQueue))
+p1=multiprocessing.Process(target=server.main,args=(dataQueue,))
 p1.start()
 signal.signal(signal.SIGINT,signalHandler)
 while True:
@@ -57,8 +57,8 @@ while True:
     measurement = {'x':xs[-1],'y':ys[-1],'r':magPhase[0],'note':note}
     dataQueue.put(measurement)
     print note
-    volume = mc.get_volume(magPhase[0],0,1)
-    sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
-    beat = Beat('drumbeat2.wav',10,6)
-    volume = mc.get_volume(magPhase[0],0,1)
-    sounds.play(sounds.singlebeat(beat))
+    #volume = mc.get_volume(magPhase[0],0,1)
+    #sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
+    #beat = Beat('drumbeat2.wav',10,6)
+    #volume = mc.get_volume(magPhase[0],0,1)
+    #sounds.play(sounds.singlebeat(beat))
