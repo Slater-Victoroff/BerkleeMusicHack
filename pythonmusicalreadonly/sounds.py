@@ -12,6 +12,14 @@ from timeline import Hit, Timeline, Beat
 # For our Berklee Music Therapy hack project: arpeggio, strumming, single notes
 # greenteawarrior
 
+# Define key and scale
+key = Note('D#3')
+scale = Scale(key, 'major')
+
+# Grab progression chords from scale starting at the octave of our key
+progression = Chord.progression(scale, base_octave=key.octave)
+# print progression
+
 def chord_progression(func):
     def generate_progression(*args, **kwargs):
         if not kwargs.get('progression', False):
@@ -67,7 +75,7 @@ def strum(*args, **kwargs):
     return strum_data
 
 #####################
-## Gesture: Strum!
+## Gesture: Single note!
 @chord_progression
 def singlenote(note_number, *args, **kwargs):
     singlenote_timeline = Timeline()
@@ -92,18 +100,60 @@ def singlebeat(beat):
 
     return beat_data
 
+#####################
+## Chord things!
 @chord_progression
 def multinote(note_dict, *args, **kwargs):
     """
     note_dict should be of the form:
-    {
-    note_number1: volume1,
-    note_numer2: volume2,
+    [
+    [note_number1, volume1],
+    [note_numer2, volume2],
     ...
-    }
+    ]
     """
-    notes = [singlenote(number, False, *args, **kwargs) for number in note_dict]
-    return reduce(operator.add, [note * volume for note, volume in zip(notes, note_dict)])
+    notes = [singlenote(number[0], *args, **kwargs) for number in note_dict]
+    notes_vols = [number[1] for number in note_dict]
+    return reduce(operator.add, [note * volume for note, volume in zip(notes, notes_vols)])
+
+#####################
+## Multilayered things!
+@chord_progression
+def multilayer(layers_input, *args, **kwargs):
+    """
+    layers_input should be of the form:
+    [
+    {"layertype": "arpeggio", "volume": volumeint},
+    {"layertype": "strum", "volume", volumeint},
+    {"layertype": "singlenote", "volume": volumeint, "note_number": notenumberint},
+    {"layertype": "multinote", "volume": volumeint, "note_dict": note_dict}
+    ]
+    """
+
+    layerslength = len(layers_input)
+    layers = [0 * (layerslength + 1)]
+    layersvols = [0 * (layerslength + 1)]
+
+    for i in range(len(layers_input)):
+        for l in layers_input:
+            layertype = l["layertype"]
+            layervolume = l["volume"]
+            layersvols[i] = layervolume
+
+            if layertype == "arpeggio":
+                layers[i] = arpeggio(*args, **kwargs)
+            elif layertype == "strum":
+                layers[i] = strum(*args, **kwargs)
+            elif layertype == "singlenote":
+                note_number = l["note_number"]
+                layers[i] = singlenote(note_number, *args, **kwargs)
+            elif layertype == "multinote":
+                note_dict = l["note_dict"]
+                layers[i] = multinote(note_dict, *args, **kwargs)
+
+    print layers
+    print layers_input
+    return
 
 
 @chord_progression
@@ -144,9 +194,29 @@ def play(data, volume=0.25) :
 # # Trying to do continuous arpeggio?
 
 # print "Playing strum audio..."
+# # play(strum(), 0.5)
+
+# print "Playing single note audio..."
+# first = singlenote(0)
+# play(first, 0.5)
+# play(first, 0.5)
+# play(first, 0.5)
+
+# print "Playing strum audio..."
 # play(strum(), 0.5)
 
 
+
+
+
+# print "Playing single note audio..."
+# first = singlenote(0)
+# play(multinote({0:10, 1: 10, 2:10}, note="A3", scale="pentatonicmajor"))
+
+# play(multinote([[0,0], [1,5], [2,5]], note="A3", scale="pentatonicmajor"))
+
 play(notes_and_beat(multinote({0:10, 1: 10, 2:10}), singlebeat(Beat('drumbeat2.wav')), note="A3", scale="pentatonicmajor"))
+
+multilayer([{"layertype": "singlenote", "volume": .5, "note_number": 1}], note="A3", scale="pentatonicmajor")
 
 print "Done!"
