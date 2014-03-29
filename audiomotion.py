@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import map_cvdata as mc
 import sounds
+from timeline import Beat
 
 xx,yy = np.meshgrid(np.arange(640),np.arange(480))
 dxs = []
@@ -38,5 +39,6 @@ while True:
     print magPhase
     note = mc.get_note(magPhase[1])
     print note
+    beat = Beat('drumbeat2.wav',10,6)
     volume = mc.get_volume(magPhase[0],0,1)
-    sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
+    sounds.play(sounds.singlebeat(beat))
