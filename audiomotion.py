@@ -52,11 +52,10 @@ while True:
 
     vecs = (dxs[-1],dys[-1]) 
     magPhase = mc.extract_mag_and_phase(vecs)
-    print magPhase
     note = mc.get_note(magPhase[1])
-    measurement = {'x':xs[-1],'y':ys[-1],'r':magPhase[0],'note':note}
-    dataQueue.put(measurement)
-    print note
+    measurement = {'x':xs[-1],'y':ys[-1],'note':note}
+    if (xs[-1] != np.nan) and (ys[-1] != np.nan):
+        dataQueue.put(measurement)
     #volume = mc.get_volume(magPhase[0],0,1)
     #sounds.play(sounds.arpeggio(note=note,scale='pentatonicmajor'))
     #beat = Beat('drumbeat2.wav',10,6)

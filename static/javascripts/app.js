@@ -3,6 +3,7 @@
 
 note = T("sin", {freq:261.626, mul:1});
 notes = [261.626, 293.665, 329.628, 391.995, 440.000]
+count = 0;
 
 $(document).ready(function() {
     note.play();
@@ -23,7 +24,7 @@ $(document).ready(function() {
 
     var colors = [["#3498db", "#2980b9"], ["#f1c40f", "#f39c12"], ["#2ecc71", "#27ae60"], ["#9b59b6", "#8e44ad"], ["#e67e22", "#d35400"]];
     var circle = function(x, y, r, color_index) {
-        var c = two.makeCircle(x*scale_x, y*scale_y, r);
+        var c = two.makeCircle(x*scale_x, h-y*scale_y, r);
         c.fill = colors[color_index][0];
         c.stroke = colors[color_index][1];
         c.linewidth = 5;
@@ -44,18 +45,23 @@ $(document).ready(function() {
       ws.send("Socket opened.");
     };
     ws.onmessage = function (evt) {
+      console.log(evt.data)
       var data = JSON.parse(evt.data);
-      note.set({freq: notes[data.note]});
-      var c = circle(data.x, data.y, data.r, data.note);
-
-      two.update()
+      if (typeof(data) != "string") {
+        count++;
+        if (count % 5 == 0) {
+          note.set({freq: notes[data.note]});
+          var c = circle(data.x, data.y, 5, data.note);
+          two.update()
+        }
+      } 
     };
 
     var update = function() {
         for (var c in circles) {
             circles[c].opacity *= 0.99;
             circles[c].scale *= 1.01;
-            if (circles[c].opacity < 0.005) {
+            if (circles[c].opacity < (0.00025*circles.length)) {
                 two.remove(circles[c]);
             }
             two.update()

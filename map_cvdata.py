@@ -18,8 +18,7 @@ def get_note(phase):
     """
     Figure out what range the phase is in
     """
-    print phase
-    correct = 'D'
+    correct = 1
 
     #note_phases = {'G':[90,112],'C':[112,134],'E':[134,156],'A':[156,178],'D':[178,200]}
     note_phases = {0:[90,112],1:[112,134],2:[134,156],3:[156,178],4:[178,200]}
