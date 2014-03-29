@@ -45,9 +45,9 @@ $(document).ready(function() {
 
     var update = function() {
         for (var c in circles) {
-            circles[c].opacity *= 0.95;
-            circles[c].scale *= 1.02;
-            if (circles[c].opacity < 0.05) {
+            circles[c].opacity *= 0.99;
+            circles[c].scale *= 1.01;
+            if (circles[c].opacity < 0.005) {
                 two.remove(circles[c]);
             }
             two.update()
