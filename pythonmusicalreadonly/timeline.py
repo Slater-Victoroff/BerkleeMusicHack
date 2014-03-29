@@ -1,5 +1,7 @@
+import pygame
+import numpy as np
 from collections import defaultdict
-
+from scipy.io.wavfile import read
 from musical.audio import source
 
 # XXX: Early implementation of timeline/hit concepts. Needs lots of work
@@ -29,6 +31,29 @@ class Hit:
       Hit.cache[key] = source.pluck(self.note, self.length)
     return Hit.cache[key]
 
+class Beat:
+  ''' Adding a beat class for looping audio files
+  '''
+
+  def __init__(self, filename):
+    self.filename = filename
+    self.length = 6
+
+  def render(self):
+    ''' Returns the wav file converted to a numpy array
+    '''
+    sound = read(self.filename)
+    data = np.array(sound[1],dtype=float)
+    # average between channels
+    data = (data[:,0]+data[:,1])/2
+
+    def rescale(val, in_min, in_max, out_min, out_max):
+      return out_min + (val - in_min) * ((out_max - out_min) / (in_max - in_min))
+
+    # rescale to between 0 and 1 so it doesn't blow the speakers
+    data = rescale(data, data.min(), data.max(), -1, 1)
+
+    return data
 
 class Timeline:
 
@@ -60,4 +85,3 @@ class Timeline:
         data = hit.render()
         out[index:index + len(data)] += data
     return out
-
