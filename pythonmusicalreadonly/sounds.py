@@ -1,9 +1,12 @@
 import operator
+import pygame
+import numpy as np
 
 from musical.theory import Note, Scale, Chord
-from musical.audio import playback
+from musical.audio import playback, source, effect
+from scipy.io.wavfile import read
 
-from timeline import Hit, Timeline
+from timeline import Hit, Timeline, Beat
 
 # Building upon example-01.py from the python-musical repo online
 # For our Berklee Music Therapy hack project: arpeggio, strumming, single notes
@@ -15,7 +18,7 @@ scale = Scale(key, 'major')
 
 # Grab progression chords from scale starting at the octave of our key
 progression = Chord.progression(scale, base_octave=key.octave)
-print progression
+# print progression
 
 def chord_progression(func):
     def generate_progression(*args, **kwargs):
@@ -72,7 +75,7 @@ def strum(*args, **kwargs):
     return strum_data
 
 #####################
-## Gesture: Strum!
+## Gesture: Single note!
 @chord_progression
 def singlenote(note_number, *args, **kwargs):
     singlenote_timeline = Timeline()
@@ -86,23 +89,112 @@ def singlenote(note_number, *args, **kwargs):
     singlenote_data = singlenote_timeline.render()
 
     return singlenote_data
+        
+def singlebeat(beat):
+    beat_timeline = Timeline()
+    time = 0.0
+    beat_timeline.add(time+0.0, beat)
 
+    print "Rendering beat audio..."
+    beat_data = beat_timeline.render()
+
+    return beat_data
+
+#####################
+## Chord things!
 @chord_progression
 def multinote(note_dict, *args, **kwargs):
     """
     note_dict should be of the form:
-    {
-    note_number1: volume1,
-    note_numer2: volume2,
+    [
+    [note_number1, volume1],
+    [note_numer2, volume2],
     ...
-    }
+    ]
     """
-    notes = [singlenote(number, *args, **kwargs) for number in note_dict]
-    return reduce(operator.add, [note * volume for note, volume in zip(notes, note_dict)])
+    notes = [singlenote(number[0], *args, **kwargs) for number in note_dict]
+    # print notes
+    notes_vols = [number[1] for number in note_dict]
+    # print notes_vols
+    return reduce(operator.add, [note * volume for note, volume in zip(notes, notes_vols)])
+
+#####################
+## Multilayered things!
+@chord_progression
+def multilayer(layers_input, *args, **kwargs):
+    """
+    layers_input should be of the form:
+    [
+    ["arpeggio", volumeint],
+    ["strum", volumeint],
+    ["singlenote", volumeint, notenumberint],
+    ["multinote", volumeint, note_dict]
+    ]
+    """
+
+    layerslength = len(layers_input) 
+    layers = [0] * (layerslength)
+    layersvols = [0] * (layerslength)
+
+    for i in range(len(layers_input)):
+        currentlayer = layers_input[i]
+        layertype = currentlayer[0]
+        layervolume = currentlayer[1]
+        layersvols[i] = layervolume
+
+        if layertype == "arpeggio":
+            layers[i] = arpeggio(*args, **kwargs)
+        elif layertype == "strum":
+            layers[i] = strum(*args, **kwargs)
+        elif layertype == "singlenote":
+            note_number = currentlayer[2]
+            layers[i] = singlenote(note_number, *args, **kwargs)
+        elif layertype == "multinote":
+            note_dict = currentlayer[2]
+            layers[i] = multinote(note_dict, *args, **kwargs)
+
+    returnme =  reduce(operator.add, [note * volume for note, volume in zip(layers, layersvols)])
+    print returnme
+    return returnme
+=======
+        for l in layers_input:
+            layertype = l["layertype"]
+            layervolume = l["volume"]
+            layersvols[i] = layervolume
+
+            if layertype == "arpeggio":
+                layers[i] = arpeggio(*args, **kwargs)
+            elif layertype == "strum":
+                layers[i] = strum(*args, **kwargs)
+            elif layertype == "singlenote":
+                note_number = l["note_number"]
+                layers[i] = singlenote(note_number, *args, **kwargs)
+            elif layertype == "multinote":
+                note_dict = l["note_dict"]
+                layers[i] = multinote(note_dict, *args, **kwargs)
+
+    print layers
+    print layers_input
+    return
+
+
+@chord_progression
+def notes_and_beat(notes, beat, *args, **kwargs):
+    """
+    notes should be the result of multinote or singlenote
+    beat should be results of singlebeat
+    """
+    if len(beat) > len(notes):
+        res = beat.copy()
+        res[:len(notes)] += notes
+    else:
+        res = notes.copy()
+        res[:len(beat)] += beat
+    return res
 
 #####################
 ## Playing a data file at a particular volume
-def play(data, volume=0.25) :
+def play(data, volume=1) :
     # input is a proportion. 0<volume<1
     # example: a volume input of 0.25 makes it play at 25% volume
 
@@ -115,6 +207,7 @@ def play(data, volume=0.25) :
 
     return
 
+
 #####################
 # Audio testing
 # print "Playing arpeggio audio..."
@@ -122,20 +215,32 @@ def play(data, volume=0.25) :
 
 # # Trying to do continuous arpeggio?
 
-print "Playing strum audio..."
-# play(strum(), 0.5)
+# print "Playing strum audio..."
+# # play(strum(), 0.5)
 
-print "Playing single note audio..."
-first = singlenote(0)
-play(first, 0.5)
-play(first, 0.5)
-play(first, 0.5)
+# print "Playing single note audio..."
+# first = singlenote(0)
+# play(first, 0.5)
+# play(first, 0.5)
+# play(first, 0.5)
 
 # print "Playing strum audio..."
 # play(strum(), 0.5)
 
+
+
+
+
 # print "Playing single note audio..."
 # first = singlenote(0)
-play(multinote({0:10, 1: 10, 2:10}, note="A3", scale="pentatonicmajor"))
+# play(multinote({0:10, 1: 10, 2:10}, note="A3", scale="pentatonicmajor"))
+
+# play(multinote([[0,0], [1,5], [2,5]], note="A3", scale="pentatonicmajor"))
+
+# multilayer([{"layertype": "singlenote", "volume": .5, "note_number": 1}], note="A3", scale="pentatonicmajor")
+
+# multilayer([["arpeggio", 2], ["arpeggio", 3]], note="A3", scale="pentatonicmajor")
+# play(notes_and_beat(multinote({0:10, 1: 10, 2:10}), singlebeat(Beat('drumbeat2.wav')), note="A3", scale="pentatonicmajor"))
+
 
 print "Done!"
