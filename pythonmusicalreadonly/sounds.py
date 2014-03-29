@@ -1,3 +1,5 @@
+import operator
+
 from musical.theory import Note, Scale, Chord
 from musical.audio import playback
 
@@ -9,9 +11,10 @@ from timeline import Hit, Timeline
 
 def chord_progression(func):
     def generate_progression(*args, **kwargs):
-        kwargs['key'] = Note(kwargs.get('note', 'D3'))
-        kwargs['scale'] = Scale(kwargs['key'], kwargs.get('scale', 'major'))
-        kwargs['progression'] = Chord.progression(kwargs['scale'], base_octave=kwargs['key'].octave)
+        if not kwargs.get('progression', False):
+            kwargs['key'] = Note(kwargs.get('note', 'D3'))
+            kwargs['scale'] = Scale(kwargs['key'], kwargs.get('scale', 'major'))
+            kwargs['progression'] = Chord.progression(kwargs['scale'], base_octave=kwargs['key'].octave)
         return func(*args, **kwargs)
     return generate_progression
 
@@ -76,6 +79,19 @@ def singlenote(note_number, *args, **kwargs):
 
     return singlenote_data
 
+@chord_progression
+def multinote(note_dict, *args, **kwargs):
+    """
+    note_dict should be of the form:
+    {
+    note_number1: volume1,
+    note_numer2: volume2,
+    ...
+    }
+    """
+    notes = [singlenote(number, *args, **kwargs) for number in note_dict]
+    return reduce(operator.add, [note * volume for note, volume in zip(notes, note_dict)])
+
 #####################
 ## Playing a data file at a particular volume
 def play(data, volume=0.25) :
@@ -93,19 +109,16 @@ def play(data, volume=0.25) :
 
 #####################
 # Audio testing
-print "Playing arpeggio audio..."
-play(arpeggio(), 0.25)
+# print "Playing arpeggio audio..."
+# play(arpeggio(), 0.25)
 
-# Trying to do continuous arpeggio?
+# # Trying to do continuous arpeggio?
 
-print "Playing strum audio..."
-play(strum(), 0.5)
+# print "Playing strum audio..."
+# play(strum(), 0.5)
 
-print "Playing single note audio..."
-first = singlenote(0)
-play(first, 0.5)
-play(first, 0.5)
-play(singlenote(1), 0.5)
-play(singlenote(2), 0.5)
+# print "Playing single note audio..."
+# first = singlenote(0)
+play(multinote({0:10, 1: 10, 2:10}, note="A3", scale="pentatonicmajor"))
 
 print "Done!"
