@@ -1,14 +1,11 @@
 
 //C D E G A
-notes = [T("sin", {freq:261.626, mul:1}), 
-         T("sin", {freq:293.665, mul:1}),
-         T("sin", {freq:329.628, mul:1}),
-         T("sin", {freq:391.995, mul:1}),
-         T("sin", {freq:440.000, mul:1})]
 
-prev = false;
+note = T("sin", {freq:261.626, mul:1});
+notes = [261.626, 293.665, 329.628, 391.995, 440.000]
 
 $(document).ready(function() {
+    note.play();
 
     circles = [];
 
@@ -36,7 +33,7 @@ $(document).ready(function() {
         return c;
     }
 
-    var c = circle(300, 240, 20, 0)
+    var c = circle(300, 240, 1, 0)
     // Don't forget to tell two to render everything
     // to the screen
     two.update();
@@ -48,12 +45,8 @@ $(document).ready(function() {
     };
     ws.onmessage = function (evt) {
       var data = JSON.parse(evt.data);
+      note.set({freq: notes[data.note]});
       var c = circle(data.x, data.y, data.r, data.note);
-      if (prev) {
-        prev.pause()
-      }
-      prev = notes[data.note].play(1);
-      console.log(prev);
 
       two.update()
     };
