@@ -78,13 +78,13 @@ def singlenote(note_number, *args, **kwargs):
 @chord_progression
 def multinote(note_dict, *args, **kwargs):
     """
-note_dict should be of the form:
-{
-note_number1: volume1,
-note_numer2: volume2,
-...
-}
-"""
+    note_dict should be of the form:
+    {
+    note_number1: volume1,
+    note_numer2: volume2,
+    ...
+    }
+    """
     notes = [singlenote(number, *args, **kwargs) for number in note_dict]
     return reduce(operator.add, [note * volume for note, volume in zip(notes, note_dict)])
 
@@ -94,7 +94,7 @@ def play(data, volume=0.25) :
     # input is a proportion. 0<volume<1
     # example: a volume input of 0.25 makes it play at 25% volume
 
-    # Reduce volume to the specified number
+    # Reduce volume to the specified number 
     data = data * volume
 
     # Playing the audio

@@ -18,7 +18,8 @@ def pygame_supported():
   ''' Return True is pygame playback is supported
   '''
   try:
-    import pygame
+    #import pygame
+    return False
   except:
     return False
   return True
