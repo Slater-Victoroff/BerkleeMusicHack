@@ -100,7 +100,9 @@ def multinote(note_dict, *args, **kwargs):
     ]
     """
     notes = [singlenote(number[0], *args, **kwargs) for number in note_dict]
+    # print notes
     notes_vols = [number[1] for number in note_dict]
+    # print notes_vols
     return reduce(operator.add, [note * volume for note, volume in zip(notes, notes_vols)])
 
 #####################
@@ -110,43 +112,41 @@ def multilayer(layers_input, *args, **kwargs):
     """
     layers_input should be of the form:
     [
-    {"layertype": "arpeggio", "volume": volumeint},
-    {"layertype": "strum", "volume", volumeint},
-    {"layertype": "singlenote", "volume": volumeint, "note_number": notenumberint},
-    {"layertype": "multinote", "volume": volumeint, "note_dict": note_dict}
+    ["arpeggio", volumeint],
+    ["strum", volumeint],
+    ["singlenote", volumeint, notenumberint],
+    ["multinote", volumeint, note_dict]
     ]
     """
 
-    layerslength = len(layers_input)
-    layers = [0 * (layerslength + 1)]
-    layersvols = [0 * (layerslength + 1)]
+    layerslength = len(layers_input) 
+    layers = [0] * (layerslength)
+    layersvols = [0] * (layerslength)
 
     for i in range(len(layers_input)):
-        for l in layers_input:
-            layertype = l["layertype"]
-            layervolume = l["volume"]
-            layersvols[i] = layervolume
+        currentlayer = layers_input[i]
+        layertype = currentlayer[0]
+        layervolume = currentlayer[1]
+        layersvols[i] = layervolume
 
-            if layertype == "arpeggio":
-                layers[i] = arpeggio(*args, **kwargs)
-            elif layertype == "strum":
-                layers[i] = strum(*args, **kwargs)
-            elif layertype == "singlenote":
-                note_number = l["note_number"]
-                layers[i] = singlenote(note_number, *args, **kwargs)
-            elif layertype == "multinote":
-                note_dict = l["note_dict"]
-                layers[i] = multinote(note_dict, *args, **kwargs)
+        if layertype == "arpeggio":
+            layers[i] = arpeggio(*args, **kwargs)
+        elif layertype == "strum":
+            layers[i] = strum(*args, **kwargs)
+        elif layertype == "singlenote":
+            note_number = currentlayer[2]
+            layers[i] = singlenote(note_number, *args, **kwargs)
+        elif layertype == "multinote":
+            note_dict = currentlayer[2]
+            layers[i] = multinote(note_dict, *args, **kwargs)
 
-    print layers
-    print layers_input
-    return
-
-    #return reduce(operator.add, [note * volume for note, volume in zip(layers, layersvols)])
+    returnme =  reduce(operator.add, [note * volume for note, volume in zip(layers, layersvols)])
+    print returnme
+    return returnme
 
 #####################
 ## Playing a data file at a particular volume
-def play(data, volume=0.25) :
+def play(data, volume=1) :
     # input is a proportion. 0<volume<1
     # example: a volume input of 0.25 makes it play at 25% volume
 
@@ -184,7 +184,9 @@ def play(data, volume=0.25) :
 
 # play(multinote([[0,0], [1,5], [2,5]], note="A3", scale="pentatonicmajor"))
 
+# multilayer([{"layertype": "singlenote", "volume": .5, "note_number": 1}], note="A3", scale="pentatonicmajor")
 
-multilayer([{"layertype": "singlenote", "volume": .5, "note_number": 1}], note="A3", scale="pentatonicmajor")
+multilayer([["arpeggio", 2], ["arpeggio", 3]], note="A3", scale="pentatonicmajor")
+
 
 print "Done!"
